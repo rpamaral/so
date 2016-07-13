@@ -1,24 +1,69 @@
-Producer (Thr#1) :: Interation#0 >> input/1.pl
-Producer (Thr#1) :: Interation#1 >> input/1.pl
-Producer (Thr#1) :: Interation#2 >> input/1.pl
-Producer (Thr#1) :: Interation#3 >> input/1.pl
-Consumer (Thr#6) :: Interation#0 >> 1
-Consumer (Thr#6) :: Interation#1 >> 2
-Consumer (Thr#6) :: Interation#2 >> 3
-Consumer (Thr#6) :: Interation#3 >> EOF
-Producer (Thr#2) :: Interation#0 >> input/2.pl
-Producer (Thr#2) :: Interation#1 >> input/2.pl
-Producer (Thr#3) :: Interation#0 >> input/3.pl
-Producer (Thr#3) :: Interation#1 >> input/3.pl
-Producer (Thr#3) :: Interation#2 >> input/3.pl
-Consumer (Thr#5) :: Interation#0 >> 4
-Producer (Thr#2) :: Interation#2 >> input/2.pl
-Consumer (Thr#4) :: Interation#0 >> 5
-Producer (Thr#3) :: Interation#3 >> input/3.pl
-Consumer (Thr#5) :: Interation#1 >> 7
-Producer (Thr#2) :: Interation#3 >> input/2.pl
-Consumer (Thr#4) :: Interation#1 >> 8
-Consumer (Thr#4) :: Interation#2 >> 9
-Consumer (Thr#4) :: Interation#3 >> 6
-Consumer (Thr#5) :: Interation#2 >> EOF
-Consumer (Thr#5) :: Interation#3 >> EOF
+Producer (Thr#1) :: Interation#0 >> input/1.pl >> icalculatedifference-cntr2(1,1.0).
+|icalculatedifference-cntr2(1,1.0).
+||||||
+Producer (Thr#1) :: Interation#1 >> input/1.pl >> icalculatedifference-cntr2(2,2.0).
+|icalculatedifference-cntr2(1,1.0).
+|icalculatedifference-cntr2(2,2.0).
+|||||
+Producer (Thr#1) :: Interation#2 >> input/1.pl >> icalculatedifference-cntr2(3,3.0).
+|icalculatedifference-cntr2(1,1.0).
+|icalculatedifference-cntr2(2,2.0).
+|icalculatedifference-cntr2(3,3.0).
+||||
+Producer (Thr#1) :: Interation#3 >> input/1.pl >> Producer (Thr#2) :: Interation#0 >> input/2.pl >> icalculatedifference-cntr2(4,4.0).
+|icalculatedifference-cntr2(1,1.0).
+|icalculatedifference-cntr2(2,2.0).
+|icalculatedifference-cntr2(3,3.0).
+|icalculatedifference-cntr2(4,4.0).
+|||
+Producer (Thr#2) :: Interation#1 >> input/2.pl >> icalculatedifference-cntr2(5,5.0).
+|icalculatedifference-cntr2(1,1.0).
+|icalculatedifference-cntr2(2,2.0).
+|icalculatedifference-cntr2(3,3.0).
+|icalculatedifference-cntr2(4,4.0).
+|icalculatedifference-cntr2(5,5.0).
+||
+Producer (Thr#2) :: Interation#2 >> input/2.pl >> icalculatedifference-cntr2(6,6.0).
+|icalculatedifference-cntr2(1,1.0).
+|icalculatedifference-cntr2(2,2.0).
+|icalculatedifference-cntr2(3,3.0).
+|icalculatedifference-cntr2(4,4.0).
+|icalculatedifference-cntr2(5,5.0).
+|icalculatedifference-cntr2(6,6.0).
+|
+Producer (Thr#2) :: Interation#3 >> input/2.pl >> Producer (Thr#3) :: Interation#0 >> input/3.pl >> icalculatedifference-cntr2(7,7.0).
+|icalculatedifference-cntr2(1,1.0).
+|icalculatedifference-cntr2(2,2.0).
+|icalculatedifference-cntr2(3,3.0).
+|icalculatedifference-cntr2(4,4.0).
+|icalculatedifference-cntr2(5,5.0).
+|icalculatedifference-cntr2(6,6.0).
+|icalculatedifference-cntr2(7,7.0).
+
+Consumer (Thr#4) :: Interation#0 >> icalculatedifference-cntr2(1,1.0).
+Consumer (Thr#4) :: Interation#1 >> icalculatedifference-cntr2(2,2.0).
+Consumer (Thr#4) :: Interation#2 >> icalculatedifference-cntr2(3,3.0).
+Producer (Thr#3) :: Interation#1 >> input/3.pl >> icalculatedifference-cntr2(8,8.0).
+|icalculatedifference-cntr2(8,8.0).
+|icalculatedifference-cntr2(2,2.0).
+|icalculatedifference-cntr2(3,3.0).
+|icalculatedifference-cntr2(4,4.0).
+|icalculatedifference-cntr2(5,5.0).
+|icalculatedifference-cntr2(6,6.0).
+|icalculatedifference-cntr2(7,7.0).
+
+Producer (Thr#3) :: Interation#2 >> input/3.pl >> icalculatedifference-cntr2(9,9.0).
+|icalculatedifference-cntr2(8,8.0).
+|icalculatedifference-cntr2(9,9.0).
+|icalculatedifference-cntr2(3,3.0).
+|icalculatedifference-cntr2(4,4.0).
+|icalculatedifference-cntr2(5,5.0).
+|icalculatedifference-cntr2(6,6.0).
+|icalculatedifference-cntr2(7,7.0).
+
+Producer (Thr#3) :: Interation#3 >> input/3.pl >> Consumer (Thr#5) :: Interation#0 >> icalculatedifference-cntr2(4,4.0).
+Consumer (Thr#5) :: Interation#1 >> icalculatedifference-cntr2(5,5.0).
+Consumer (Thr#5) :: Interation#2 >> icalculatedifference-cntr2(6,6.0).
+Consumer (Thr#6) :: Interation#0 >> icalculatedifference-cntr2(7,7.0).
+Consumer (Thr#6) :: Interation#1 >> icalculatedifference-cntr2(8,8.0).
+Consumer (Thr#6) :: Interation#2 >> icalculatedifference-cntr2(9,9.0).

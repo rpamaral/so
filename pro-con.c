@@ -5,7 +5,7 @@
 #include <string.h>
 
 #define TOTAL_FILES 3
-#define BUFFER_SIZE 6
+#define BUFFER_SIZE 7
 #define CLAUSE_SIZE 50
 #define CONS_LOOP   4
 
@@ -60,7 +60,6 @@ int main(int argc, char *argv[]) {
 void producer(int *id) {
 	int i = 0;
 	
-	char data[CLAUSE_SIZE];
 	sem_wait(&mutex);
 	printf("input :: %s\n", input[INPUT_FILE]);
 	char *file_name = input[INPUT_FILE++];
@@ -72,22 +71,22 @@ void producer(int *id) {
 		    
 		sem_wait(&empty);
 		sem_wait(&mutex);
-		fprintf(fp, "Producer (Thr#%d) :: Interation#%d >> %s\n", *id, i++, file_name);
+		fprintf(fp, "Producer (Thr#%d) :: Interation#%d >> %s >> ", *id, i++, file_name);
 		if(fscanf(ifile, "%s", buffer[in]) != EOF) {
 		    strcat(buffer[in], "\n");
+		    fprintf(fp, "%s", buffer[in]);
 		    printf("I ++ %s", buffer[in]);
 		    in = (in + 1) % BUFFER_SIZE;
-		    //print_buffer();
-		    sem_post(&mutex);
-            sem_post(&full);
+		    print_buffer(fp);
 	    } else {
 	        strcpy(buffer[in], "EOF\n");
+	        fprintf(fp, "%s", buffer[in]);
 	        printf("I ++ %s", buffer[in]);
 		    in = (in + 1) % BUFFER_SIZE;
-	        sem_post(&mutex);
-	        sem_post(&full);
+		    print_buffer(fp);
 	    }
-	    //printf_buffer(fp);
+	    sem_post(&mutex);
+        sem_post(&full);
 	}
 }
 
@@ -106,6 +105,6 @@ void consumer(int *id) {
 }
 
 void print_buffer(FILE *fp) {
-    for(int i = 0; i < BUFFER_SIZE; i++) printf(fp, "|%s", buffer[i]);
+    for(int i = 0; i < BUFFER_SIZE; i++) fprintf(fp, "|%s", buffer[i]);
     fprintf(fp, "\n");
 }
