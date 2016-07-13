@@ -12,6 +12,7 @@
 //procedures and functions
 void producer(int *id);
 void consumer(int *id);
+void print_buffer();
 
 //global variables
 FILE *fp;
@@ -21,9 +22,8 @@ char input[TOTAL_FILES][CLAUSE_SIZE] = {"input/1.pl", "input/2.pl", "input/3.pl"
 
 sem_t empty;
 sem_t full;
-sem_t cons_mutex;
-sem_t prod_mutex;
-
+sem_t mutex;
+	
 int main(int argc, char *argv[]) {
     
     //Initialize
@@ -33,8 +33,7 @@ int main(int argc, char *argv[]) {
     fp = fopen("output","a+");  
 	sem_init(&empty, 0, BUFFER_SIZE);
 	sem_init(&full, 0, 0);
-	sem_init(&cons_mutex, 0, 1);
-	sem_init(&prod_mutex, 0, 1);
+	sem_init(&mutex, 0, 1);
 
 	pthread_create(&p1, NULL, (void*) producer, &n_p1);
 	pthread_create(&p2, NULL, (void*) producer, &n_p2);
@@ -52,8 +51,7 @@ int main(int argc, char *argv[]) {
     
     sem_close(&empty);
     sem_close(&full);
-    sem_close(&cons_mutex);
-    sem_close(&prod_mutex);
+    sem_close(&mutex);
     
     fclose(fp);    
 	return 1;
@@ -63,36 +61,51 @@ void producer(int *id) {
 	int i = 0;
 	
 	char data[CLAUSE_SIZE];
-	sem_wait(&prod_mutex);
+	sem_wait(&mutex);
 	printf("input :: %s\n", input[INPUT_FILE]);
 	char *file_name = input[INPUT_FILE++];
-	sem_post(&prod_mutex);
+	sem_post(&mutex);
 	
 	FILE *ifile = fopen(file_name, "r");	
 	while(1) {
 	    if(feof(ifile)) break;	
-		fprintf(fp, "Producer (Thr#%d) :: Interation#%d >> %s\n", *id, i++, file_name);    
+		    
 		sem_wait(&empty);
-		sem_wait(&prod_mutex);
+		sem_wait(&mutex);
+		fprintf(fp, "Producer (Thr#%d) :: Interation#%d >> %s\n", *id, i++, file_name);
 		if(fscanf(ifile, "%s", buffer[in]) != EOF) {
 		    strcat(buffer[in], "\n");
 		    printf("I ++ %s", buffer[in]);
 		    in = (in + 1) % BUFFER_SIZE;
+		    //print_buffer();
+		    sem_post(&mutex);
+            sem_post(&full);
+	    } else {
+	        strcpy(buffer[in], "EOF\n");
+	        printf("I ++ %s", buffer[in]);
+		    in = (in + 1) % BUFFER_SIZE;
+	        sem_post(&mutex);
+	        sem_post(&full);
 	    }
-	    sem_post(&prod_mutex);
-        sem_post(&full);
+	    //printf_buffer(fp);
 	}
 }
 
 void consumer(int *id) {
     for (int i = 0; i < CONS_LOOP; i++) {
 	    sem_wait(&full);
-	    sem_wait(&cons_mutex);
+	    sem_wait(&mutex);
 	    char *clause = buffer[out];
 	    out = (out + 1) % BUFFER_SIZE;
-	    sem_post(&cons_mutex);
-	    sem_post(&empty);
-        printf("O -- %s", clause);
+	    printf("O -- %s", clause);
 	    fprintf(fp, "Consumer (Thr#%d) :: Interation#%d >> %s", *id, i, clause);
+	    sem_post(&mutex);
+	    sem_post(&empty);
+        
     }
+}
+
+void print_buffer(FILE *fp) {
+    for(int i = 0; i < BUFFER_SIZE; i++) printf(fp, "|%s", buffer[i]);
+    fprintf(fp, "\n");
 }
