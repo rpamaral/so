@@ -22,7 +22,8 @@ char input[TOTAL_FILES][CLAUSE_SIZE] = {"input/1.pl", "input/2.pl", "input/3.pl"
 
 sem_t empty;
 sem_t full;
-sem_t mutex;
+sem_t p_mutex;
+sem_t c_mutex;
 	
 int main(int argc, char *argv[]) {
     
@@ -33,7 +34,8 @@ int main(int argc, char *argv[]) {
     fp = fopen("output","a+");  
 	sem_init(&empty, 0, BUFFER_SIZE);
 	sem_init(&full, 0, 0);
-	sem_init(&mutex, 0, 1);
+	sem_init(&p_mutex, 0, 1);
+	sem_init(&c_mutex, 0, 1);
 
 	pthread_create(&p1, NULL, (void*) producer, &n_p1);
 	pthread_create(&p2, NULL, (void*) producer, &n_p2);
@@ -51,7 +53,8 @@ int main(int argc, char *argv[]) {
     
     sem_close(&empty);
     sem_close(&full);
-    sem_close(&mutex);
+    sem_close(&p_mutex);
+    sem_close(&c_mutex);
     
     fclose(fp);    
 	return 1;
@@ -60,17 +63,17 @@ int main(int argc, char *argv[]) {
 void producer(int *id) {
 	int i = 0;
 	
-	sem_wait(&mutex);
+	sem_wait(&p_mutex);
 	printf("input :: %s\n", input[INPUT_FILE]);
 	char *file_name = input[INPUT_FILE++];
-	sem_post(&mutex);
+	sem_post(&p_mutex);
 	
 	FILE *ifile = fopen(file_name, "r");	
 	while(1) {
 	    if(feof(ifile)) break;	
 		    
 		sem_wait(&empty);
-		sem_wait(&mutex);
+		sem_wait(&p_mutex);
 		fprintf(fp, "Producer (Thr#%d) :: Interation#%d >> %s >> ", *id, i++, file_name);
 		if(fscanf(ifile, "%s", buffer[in]) != EOF) {
 		    strcat(buffer[in], "\n");
@@ -83,9 +86,9 @@ void producer(int *id) {
 	        fprintf(fp, "%s", buffer[in]);
 	        printf("I ++ %s", buffer[in]);
 		    in = (in + 1) % BUFFER_SIZE;
-		    print_buffer(fp);
+		    print_buffer(fp);    
 	    }
-	    sem_post(&mutex);
+	    sem_post(&p_mutex);
         sem_post(&full);
 	}
 }
@@ -93,12 +96,12 @@ void producer(int *id) {
 void consumer(int *id) {
     for (int i = 0; i < CONS_LOOP; i++) {
 	    sem_wait(&full);
-	    sem_wait(&mutex);
+	    sem_wait(&c_mutex);
 	    char *clause = buffer[out];
 	    out = (out + 1) % BUFFER_SIZE;
 	    printf("O -- %s", clause);
 	    fprintf(fp, "Consumer (Thr#%d) :: Interation#%d >> %s", *id, i, clause);
-	    sem_post(&mutex);
+	    sem_post(&c_mutex);
 	    sem_post(&empty);
         
     }
